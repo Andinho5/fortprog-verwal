@@ -4,7 +4,7 @@ import java.io.*;
 import org.example.util.Color;
 import org.example.user.UserService;
 
-public class MainScreen {
+public class Main {
     public static void main(String[] args) {
         Color.init();
         ClassLoader classLoader = Main.class.getClassLoader();
