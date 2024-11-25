@@ -33,12 +33,7 @@ public class User implements Serializable, ModelObject {
 
     @Override
     public String toString() {
-        return "User{" +
-                "userid='" + userid + '\'' +
-                ", username='" + usermail + '\'' +
-                ", password='" + password + '\'' +
-                ", gehalt=" + gehalt +
-                '}';
+        return usermail + "(" + gehalt + ")";
     }
 
     public String getUserid() {

@@ -53,6 +53,7 @@ public class UserService implements ModelService<User> {
             statement.setString(2, user.getUsermail());
             statement.setString(3, user.getPassword());
             statement.setDouble(4, user.getGehalt());
+            statement.executeUpdate();
         }
         catch (SQLException e) {
             throw new RuntimeException(e);
