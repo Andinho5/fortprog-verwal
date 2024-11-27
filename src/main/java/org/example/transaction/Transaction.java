@@ -3,6 +3,7 @@ package org.example.transaction;
 import org.example.service.ModelObject;
 import org.example.user.User;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ public class Transaction implements ModelObject {
     private User sender;
     private User receiver;
     private double menge;
+    private Timestamp date;
     private String purposemessage;
 
     /**
@@ -21,11 +23,12 @@ public class Transaction implements ModelObject {
 
     }
 
-    public Transaction(String transactionid, User sender, User receiver, double menge, String purposemessage) {
+    public Transaction(String transactionid, User sender, User receiver, double menge, Timestamp date, String purposemessage) {
         this.transactionid = transactionid;
         this.sender = sender;
         this.receiver = receiver;
         this.menge = menge;
+        this.date = date;
         this.purposemessage = purposemessage;
     }
 
@@ -70,6 +73,14 @@ public class Transaction implements ModelObject {
 
     public void setMenge(double menge) {
         this.menge = menge;
+    }
+
+    public Timestamp getDate() {
+        return date;
+    }
+
+    public void setDate(Timestamp date) {
+        this.date = date;
     }
 
     public String getPurposemessage() {

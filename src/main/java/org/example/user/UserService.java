@@ -14,10 +14,10 @@ public class UserService implements ModelService<User> {
     public Optional<User> findById(String id) {
         for (User user : findAll()) {
             if (user.getUserid().equals(id)) {
+                System.out.println(user);
                 return Optional.of(user);
             }
         }
-
         return Optional.empty();
     }
 
