@@ -1,6 +1,8 @@
 package org.example;
 
 import java.io.*;
+
+import org.example.user.User;
 import org.example.util.Color;
 import org.example.user.UserService;
 
@@ -16,8 +18,11 @@ public class Main {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println();
-        UserService userService = new UserService();
-        System.out.println(userService.findAll());
+        System.out.println("Willkommen beim BalanceBuddy!");
+//        UserService userService = new UserService();
+//        System.out.println(userService.findAll());
+//
+//        userService.save(new User("7wd8a7wd", "pablo@gmail.com", "pablo123", 10000));
+//        System.out.println(userService.findAll());
     }
 }
