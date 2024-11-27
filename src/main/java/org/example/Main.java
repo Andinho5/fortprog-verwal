@@ -28,13 +28,13 @@ public class Main {
         InputStream inputStream = classLoader.getResourceAsStream("Title");
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))){
             while(reader.ready()){
-                String s = reader.readLine();
-                System.out.println(s);
-                width = s.length();
+                System.out.println(reader.readLine());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return width;
+        System.out.println();
+
+
     }
 }
