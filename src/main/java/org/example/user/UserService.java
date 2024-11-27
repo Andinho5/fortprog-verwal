@@ -1,26 +1,24 @@
 package org.example.user;
 
 import org.example.service.ModelService;
+import org.example.util.DBConnector;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UserService implements ModelService<User> {
 
-    private Connection connection;
-
-    public UserService() {
-        try {
-            connection = DriverManager.getConnection("jdbc:sqlite:./src/main/resources/testat_db.db");
-        } catch (SQLException e) {
-            throw new RuntimeException("Could not connect to database: ", e);
-        }
-    }
-
     @Override
-    public User findById(String id) {
-        return null;
+    public Optional<User> findById(String id) {
+        for (User user : findAll()) {
+            if (user.getUserid().equals(id)) {
+                System.out.println(user);
+                return Optional.of(user);
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
