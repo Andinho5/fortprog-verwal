@@ -7,18 +7,20 @@ import org.example.ui.Screen;
 import org.example.util.Color;
 
 public class Main {
-
+    //TODO exceptions nicht weitergeben sondern direkt handlen
     public static Screen currentScreen;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Color.init();
         setScreen(new MainScreen(titleInit()));
     }
 
-    public static void setScreen(Screen screen) {
+    public static void setScreen(Screen screen) throws IOException {
+        if (currentScreen != null) {
+            for(int i = 0; i<20; i++)
+                System.out.println();
+        }
         currentScreen = screen;
-        for(int i = 0; i<20; i++)
-            System.out.println();
         currentScreen.onOpen();
     }
 
@@ -28,13 +30,12 @@ public class Main {
         InputStream inputStream = classLoader.getResourceAsStream("Title");
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))){
             while(reader.ready()){
-                System.out.println(reader.readLine());
+                System.out.println(Color.RED + reader.readLine() + Color.RESET);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         System.out.println();
-
-
+        return width;
     }
 }

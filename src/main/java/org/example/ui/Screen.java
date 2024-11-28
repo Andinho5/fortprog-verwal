@@ -1,6 +1,8 @@
 package org.example.ui;
 
+import java.io.IOException;
+
 public interface Screen {
-    void onOpen();
+    void onOpen() throws IOException;
     void takeInput(String string);
 }
