@@ -4,7 +4,10 @@ import java.io.*;
 
 import org.example.ui.MainScreen;
 import org.example.ui.Screen;
+import org.example.user.User;
+import org.example.user.UserService;
 import org.example.util.Color;
+
 
 public class Main {
     //TODO exceptions nicht weitergeben sondern direkt handlen
