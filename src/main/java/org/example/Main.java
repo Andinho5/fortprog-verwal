@@ -2,27 +2,42 @@ package org.example;
 
 import java.io.*;
 
-import org.example.user.User;
+import org.example.ui.MainScreen;
+import org.example.ui.Screen;
 import org.example.util.Color;
-import org.example.user.UserService;
 
 public class Main {
-    public static void main(String[] args) {
+    //TODO exceptions nicht weitergeben sondern direkt handlen
+    public static Screen currentScreen;
+
+    public static void main(String[] args) throws IOException {
         Color.init();
+        setScreen(new MainScreen(titleInit()));
+    }
+
+    public static void setScreen(Screen screen) throws IOException {
+        if (currentScreen != null) {
+            for(int i = 0; i<20; i++)
+                System.out.println();
+        }
+        currentScreen = screen;
+        currentScreen.onOpen();
+    }
+
+    private static int titleInit() {
+        int width = 0;
         ClassLoader classLoader = Main.class.getClassLoader();
         InputStream inputStream = classLoader.getResourceAsStream("Title");
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))){
             while(reader.ready()){
-                System.out.println(reader.readLine());
+                System.out.println(Color.RED + reader.readLine() + Color.RESET);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("Willkommen beim BalanceBuddy!");
-//        UserService userService = new UserService();
-//        System.out.println(userService.findAll());
-//
-//        userService.save(new User("7wd8a7wd", "pablo@gmail.com", "pablo123", 10000));
-//        System.out.println(userService.findAll());
+        System.out.println();
+        UserService userService = new UserService();
+        userService.save(new User("7wd8a7wd", "pablo@gmail.com", "pablo123", 10000));
+        return width;
     }
 }
