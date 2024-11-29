@@ -36,6 +36,8 @@ public class Main {
             throw new RuntimeException(e);
         }
         System.out.println();
+        UserService userService = new UserService();
+        userService.save(new User("7wd8a7wd", "pablo@gmail.com", "pablo123", 10000));
         return width;
     }
 }
