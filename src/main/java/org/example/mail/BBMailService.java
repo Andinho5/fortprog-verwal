@@ -33,6 +33,11 @@ public class BBMailService implements ModelService<BBMail> {
     }
 
     @Override
+    public Optional<BBMail> findByAttribute(String attr, String value) {
+        return Optional.empty();
+    }
+
+    @Override
     public List<BBMail> findAll() {
         List<BBMail> mails = new ArrayList<>();
         try {

@@ -31,6 +31,11 @@ public class TransactionService implements ModelService<Transaction> {
     }
 
     @Override
+    public Optional<Transaction> findByAttribute(String attr, String value) {
+        return Optional.empty();
+    }
+
+    @Override
     public List<Transaction> findAll() {
         List<Transaction> transactions = new ArrayList<>();
         try {
