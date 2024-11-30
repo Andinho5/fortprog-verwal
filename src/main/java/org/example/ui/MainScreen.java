@@ -2,6 +2,7 @@ package org.example.ui;
 
 import org.example.Main;
 import org.example.user.User;
+import org.example.user.UserService;
 import org.example.util.Color;
 
 import java.io.BufferedReader;
@@ -16,9 +17,12 @@ public class MainScreen implements Screen {
     String userid;
     User user;
 
+    private UserService userService;
+
 
     public MainScreen(int width) {
         this.width = width;
+        this.userService = new UserService();
     }
 
     @Override
@@ -39,7 +43,7 @@ public class MainScreen implements Screen {
         System.out.print("Passwort: ");
         password = reader.readLine();
 
-        if(true){//insert DB-Query here with userid
+        if(userService.validateUser(username, password)){//insert DB-Query here with userid
             user = new User(userid, username, password, 1000); //switch with correct user info from database
             System.out.println("Hallo "+username+" !");
             chooseApplication();
