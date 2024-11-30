@@ -11,6 +11,7 @@ public interface ModelService<T extends ModelObject> {
     Connection connection = DBConnector.getConnection();
 
     Optional<T> findById(String id);
+    Optional<T> findByAttribute(String attr, String value);
     List<T> findAll();
 
     void save(T t);

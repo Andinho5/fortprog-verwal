@@ -10,13 +10,36 @@ import java.util.Optional;
 
 public class UserService implements ModelService<User> {
 
+    public boolean validateUser(String username, String password) {
+        for (User user : findAll()) {
+            if (user.getUsermail().equals(username) && user.getPassword().equals(password)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public Optional<User> findById(String id) {
         for (User user : findAll()) {
             if (user.getUserid().equals(id)) {
-                System.out.println(user);
                 return Optional.of(user);
             }
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<User> findByAttribute(String attr, String value) {
+        switch (attr) {
+            case "email":
+                for (User user : findAll()) {
+                    if (user.getUsermail().equals(value)) {
+                        System.out.println(user);
+                        return Optional.of(user);
+                    }
+                }
+                break;
         }
         return Optional.empty();
     }
