@@ -10,6 +10,7 @@ public class Main {
     //TODO exceptions nicht weitergeben sondern direkt handlen
     public static Screen currentScreen;
 
+
     public static void main(String[] args) throws IOException {
         Color.init();
         setScreen(new MainScreen(titleInit()));
