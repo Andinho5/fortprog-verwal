@@ -1,6 +1,7 @@
 package org.example.data;
 
 import org.example.transaction.BaseTransaction;
+import org.example.util.Regex;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.Scanner;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * A class that implements {@link AbstractDatasheet} and is used for .csv-file format.
@@ -60,13 +62,17 @@ public class CsvDatasheet extends AbstractDatasheet {
             while (scanner.hasNext()){
                 String input = scanner.nextLine();
                 String[] split = input.split(String.valueOf(DELIMITER));
-                String receiverMail = split[0];
+                String receiverMail = CsvParser.formatText(split[0]); //TODO add regex checker
+                if(!Regex.EMAIL.matcher(receiverMail).matches())throw new PatternSyntaxException(
+                        "No valid email found!", receiverMail, 0);
                 double amount = Double.parseDouble(split[1]);
                 String purpose = split[2];
                 append(new SimpleTransaction(receiverMail, amount, purpose));
             }
-        } catch (FileNotFoundException | NumberFormatException e) {
+        } catch (FileNotFoundException e) {
             throw new RuntimeException("Error in loading the file '"+_file.getAbsolutePath()+"'!", e);
+        }catch (NumberFormatException | PatternSyntaxException e){
+            CsvParser.printWrongSyntax(_file);
         }
     }
 
