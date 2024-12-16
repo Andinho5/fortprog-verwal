@@ -27,4 +27,8 @@ public class CsvParser {
         System.out.println();
     }
 
+    static String formatText(String text){
+        return text != null ? text.trim() : null;
+    }
+
 }
