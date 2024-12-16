@@ -6,10 +6,8 @@ import org.example.user.UserService;
 import org.example.util.ReceiverNotFoundException;
 import org.example.util.SenderNotFoundException;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
+import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -63,15 +61,27 @@ public class BBMailService implements ModelService<BBMail> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (SenderNotFoundException e) {
-
+            throw new RuntimeException("Sender nicht gefunden", e);
         } catch (ReceiverNotFoundException e) {
-
+            throw new RuntimeException("Empfänger nicht gefunden", e);
         }
         return mails;
     }
 
     @Override
     public void save(BBMail bbMail) {
-
+        try {
+            PreparedStatement statement = connection.prepareStatement("insert into messages " +
+                    "(chatid, senderid, receiverid, content, date) values (?, ?, ?, ?, ?)");
+            statement.setString(1, bbMail.getChatid());
+            statement.setString(2, bbMail.getSender().getUserid());
+            statement.setString(3, bbMail.getRecipient().getUserid());
+            statement.setString(4, bbMail.getContent());
+            statement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            statement.executeUpdate();
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
