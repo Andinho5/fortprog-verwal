@@ -5,9 +5,8 @@ import org.example.user.User;
 
 import java.sql.Timestamp;
 import java.util.Objects;
-import java.util.Optional;
 
-public class Transaction implements ModelObject {
+public class Transaction implements ModelObject, BaseTransaction {
     private String transactionid;
     private User sender;
     private User receiver;
@@ -43,11 +42,16 @@ public class Transaction implements ModelObject {
         return Objects.hashCode(transactionid);
     }
 
-    public String getTransactionid() {
+    public String getTransactionId() {
         return transactionid;
     }
 
-    public void setTransactionid(String transactionid) {
+    @Override
+    public String getReceiverMail() {
+        return receiver.getUsermail();
+    }
+
+    public void setTransactionId(String transactionid) {
         this.transactionid = transactionid;
     }
 
@@ -67,11 +71,11 @@ public class Transaction implements ModelObject {
         this.receiver = receiver;
     }
 
-    public double getMenge() {
+    public double getAmount() {
         return menge;
     }
 
-    public void setMenge(double menge) {
+    public void setAmount(double menge) {
         this.menge = menge;
     }
 
@@ -83,11 +87,11 @@ public class Transaction implements ModelObject {
         this.date = date;
     }
 
-    public String getPurposemessage() {
+    public String getPurposeMessage() {
         return purposemessage;
     }
 
-    public void setPurposemessage(String purposemessage) {
+    public void setPurposeMessage(String purposemessage) {
         this.purposemessage = purposemessage;
     }
 }

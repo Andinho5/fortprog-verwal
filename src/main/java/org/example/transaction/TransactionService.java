@@ -23,7 +23,7 @@ public class TransactionService implements ModelService<Transaction> {
     @Override
     public Optional<Transaction> findById(String id) {
         for (Transaction transaction : findAll()) {
-            if (transaction.getTransactionid().equals(id)) {
+            if (transaction.getTransactionId().equals(id)) {
                 return Optional.of(transaction);
             }
         }
@@ -51,12 +51,12 @@ public class TransactionService implements ModelService<Transaction> {
                     throw new ReceiverNotFoundException("");
                 }
                 Transaction transaction = new Transaction();
-                transaction.setTransactionid(resultSet.getString("transactionid"));
+                transaction.setTransactionId(resultSet.getString("transactionid"));
                 transaction.setSender(optionalSender.get());
                 transaction.setReceiver(optionalReceiver.get());
-                transaction.setMenge(resultSet.getDouble("menge"));
+                transaction.setAmount(resultSet.getDouble("menge"));
                 transaction.setDate(Timestamp.valueOf(LocalDateTime.parse(resultSet.getString("date"))));
-                transaction.setPurposemessage(resultSet.getString("purposemessage"));
+                transaction.setPurposeMessage(resultSet.getString("purposemessage"));
                 transactions.add(transaction);
             }
         } catch (SQLException e) {
@@ -77,12 +77,12 @@ public class TransactionService implements ModelService<Transaction> {
         try {
             PreparedStatement statement = connection.prepareStatement("insert into transactions " +
                     "(transactionid, senderid, receiverid, menge, date, purposemessage) values (?, ?, ?, ?, ?, ?)");
-            statement.setString(1, transaction.getTransactionid());
+            statement.setString(1, transaction.getTransactionId());
             statement.setString(2, transaction.getSender().getUsermail());
             statement.setString(3, transaction.getReceiver().getUsermail());
-            statement.setDouble(4, transaction.getMenge());
+            statement.setDouble(4, transaction.getAmount());
             statement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
-            statement.setString(6, transaction.getPurposemessage());
+            statement.setString(6, transaction.getPurposeMessage());
             statement.executeUpdate();
         }
         catch (SQLException e) {

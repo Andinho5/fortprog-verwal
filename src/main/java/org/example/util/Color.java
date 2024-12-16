@@ -41,19 +41,17 @@ public enum Color {
         return randomColor(false);
     }
 
-    @Deprecated
     public static String t(String i){
         return translateColors(i);
     }
 
-    @Deprecated
     public static String translateColors(String input, boolean addReset){
         for(Color color : values()){
             input = color.translate(input);
         }
         return addReset ? input + RESET : input;
     }
-    @Deprecated
+
     public static String translateColors(String input){
         return translateColors(input, true);
     }
