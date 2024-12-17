@@ -5,7 +5,7 @@ import org.example.user.User;
 import java.io.IOException;
 
 public class BankApplication extends Application {
-    User user;
+    private User user;
 
     public BankApplication(User user) {
         super(user);
