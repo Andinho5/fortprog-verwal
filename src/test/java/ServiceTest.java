@@ -1,3 +1,5 @@
+import org.example.mail.BBMail;
+import org.example.mail.BBMailService;
 import org.example.transaction.Transaction;
 import org.example.transaction.TransactionService;
 import org.example.user.User;
@@ -15,7 +17,7 @@ public class ServiceTest {
 
         System.out.println(userService.findAll());
         userService.save(new User(UUID.randomUUID().toString(),
-                "test@gmail.com", "123", 10000));
+                UUID.randomUUID() + "@gmail.com", "123", 10000));
         System.out.println(userService.findAll());
     }
 
@@ -29,6 +31,19 @@ public class ServiceTest {
         for (int i = 0; i < 10; i++) {
             transactionService.save(new Transaction(UUID.randomUUID().toString(),
                     sender, recipient, 100, Timestamp.valueOf(LocalDateTime.now()), "Test"));
+        }
+    }
+
+    @Test
+    void mailTest() {
+        UserService userService = new UserService();
+        User sender = userService.findAll().get(0), recipient = userService.findAll().get(1);
+
+        BBMailService mailService = new BBMailService(userService);
+
+        for (int i = 0; i < 10; i++) {
+            mailService.save(new BBMail(UUID.randomUUID().toString(), sender, recipient,
+                    "Hallo Message!", Timestamp.valueOf(LocalDateTime.now())));
         }
     }
 }
