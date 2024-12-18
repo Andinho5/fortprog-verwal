@@ -20,6 +20,46 @@ public class BBMailService implements ModelService<BBMail> {
         this.userService = userService;
     }
 
+    public List<PinnwandComment> getPinnwand() {
+        List<PinnwandComment> comments = new ArrayList<>();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select * from pinwand");
+            while (resultSet.next()) {
+                Optional<User> optionalOwner = userService.findById(resultSet.getString("owner")),
+                    optionalAuthor = userService.findById(resultSet.getString("author"));
+
+                PinnwandComment comment = new PinnwandComment();
+                comment.setCommentid(resultSet.getString("commentid"));
+                optionalOwner.ifPresent(comment::setOwner);
+                optionalAuthor.ifPresent(comment::setAuthor);
+                comment.setContent(resultSet.getString("content"));
+                comment.setDate(new Timestamp(Long.parseLong(resultSet.getString("date"))));
+                comments.add(comment);
+            }
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return comments;
+    }
+
+    public void savePinnwand(PinnwandComment comment) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("insert into pinwand " +
+                    "(commentid, owner, author, content, date) values (?, ?, ?, ?, ?)");
+            statement.setString(1, comment.getCommentid());
+            statement.setString(2, comment.getOwner().getUserid());
+            statement.setString(3, comment.getAuthor().getUserid());
+            statement.setString(4, comment.getContent());
+            statement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
+            statement.executeUpdate();
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public Optional<BBMail> findById(String id) {
         for (BBMail bbMail : findAll()) {
