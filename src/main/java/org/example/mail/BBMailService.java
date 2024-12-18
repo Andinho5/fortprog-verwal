@@ -32,6 +32,13 @@ public class BBMailService implements ModelService<BBMail> {
 
     @Override
     public Optional<BBMail> findByAttribute(String attr, String value) {
+        if (attr.equals("id")) {
+            for (BBMail bbMail : findAll()) {
+                if (bbMail.getChatid().equals(value)) {
+                    return Optional.of(bbMail);
+                }
+            }
+        }
         return Optional.empty();
     }
 
@@ -55,7 +62,8 @@ public class BBMailService implements ModelService<BBMail> {
                 mail.setSender(optionalSender.get());
                 mail.setRecipient(optionalReceiver.get());
                 mail.setContent(resultSet.getString("content"));
-                mail.setDate(Timestamp.valueOf(resultSet.getString("date")));
+                Timestamp timestamp = new Timestamp(Long.parseLong(resultSet.getString("date")));
+                mail.setDate(timestamp);
                 mails.add(mail);
             }
         } catch (SQLException e) {

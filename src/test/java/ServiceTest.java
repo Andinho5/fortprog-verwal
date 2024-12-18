@@ -25,12 +25,17 @@ public class ServiceTest {
     void transactionTest() {
         UserService userService = new UserService();
         User sender = userService.findAll().get(0), recipient = userService.findAll().get(1);
+
         TransactionService transactionService = new TransactionService(userService);
 
 //        System.out.println(transactionService.findAll());
-        for (int i = 0; i < 10; i++) {
-            transactionService.save(new Transaction(UUID.randomUUID().toString(),
-                    sender, recipient, 100, Timestamp.valueOf(LocalDateTime.now()), "Test"));
+//        for (int i = 0; i < 10; i++) {
+//            transactionService.save(new Transaction(UUID.randomUUID().toString(),
+//                    sender, recipient, 100, Timestamp.valueOf(LocalDateTime.now()), "Test" + LocalDateTime.now()));
+//        }
+
+        for (Transaction transaction : transactionService.findAll()) {
+            System.out.println(transaction);
         }
     }
 
@@ -44,6 +49,14 @@ public class ServiceTest {
         for (int i = 0; i < 10; i++) {
             mailService.save(new BBMail(UUID.randomUUID().toString(), sender, recipient,
                     "Hallo Message!", Timestamp.valueOf(LocalDateTime.now())));
+        }
+    }
+
+    @Test
+    void mailFetchTest() {
+        BBMailService mailService = new BBMailService(new UserService());
+        for (BBMail mail : mailService.findAll()) {
+            System.out.println(mail);
         }
     }
 }

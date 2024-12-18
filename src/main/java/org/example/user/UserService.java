@@ -12,6 +12,7 @@ public class UserService implements ModelService<User> {
 
     public boolean validateUser(String username, String password) {
         for (User user : findAll()) {
+
             if (user.getUsermail().equals(username) && user.getPassword().equals(password)) {
                 return true;
             }
@@ -22,6 +23,7 @@ public class UserService implements ModelService<User> {
     @Override
     public Optional<User> findById(String id) {
         for (User user : findAll()) {
+            System.out.println(user + ": " + user.getUserid());
             if (user.getUserid().equals(id)) {
                 return Optional.of(user);
             }
@@ -32,6 +34,16 @@ public class UserService implements ModelService<User> {
     @Override
     public Optional<User> findByAttribute(String attr, String value) {
         switch (attr) {
+            case "name":
+            case "username":
+            case "mail":
+            case "usermail":
+                for (User user : findAll()) {
+                    if (user.getUsermail().equals(value)) {
+                        return Optional.of(user);
+                    }
+                }
+                break;
             case "email":
                 for (User user : findAll()) {
                     if (user.getUsermail().equals(value)) {

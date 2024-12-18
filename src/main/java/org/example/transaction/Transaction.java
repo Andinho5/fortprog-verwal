@@ -38,6 +38,17 @@ public class Transaction implements ModelObject, BaseTransaction {
     }
 
     @Override
+    public String toString() {
+        return "Transaction{" +
+                "receiver=" + receiver +
+                ", date=" + date +
+                ", menge=" + menge +
+                ", purposemessage='" + purposemessage + '\'' +
+                ", transactionid='" + transactionid + '\'' +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hashCode(transactionid);
     }
