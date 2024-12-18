@@ -35,6 +35,17 @@ public class BBMail implements ModelObject {
     }
 
     @Override
+    public String toString() {
+        return "BBMail{" +
+                "chatid='" + chatid + '\'' +
+                ", sender=" + sender +
+                ", recipient=" + recipient +
+                ", content='" + content + '\'' +
+                ", date=" + date +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hashCode(chatid);
     }
