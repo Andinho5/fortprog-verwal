@@ -39,13 +39,9 @@ public class Transaction implements ModelObject, BaseTransaction {
 
     @Override
     public String toString() {
-        return "Transaction{" +
-                "receiver=" + receiver +
-                ", date=" + date +
-                ", menge=" + menge +
-                ", purposemessage='" + purposemessage + '\'' +
-                ", transactionid='" + transactionid + '\'' +
-                '}';
+        return """
+               [Transaction(%s): %s -> %s; Zweck: %s]
+               """.formatted(date, menge, receiver.getUsermail(), purposemessage);
     }
 
     @Override

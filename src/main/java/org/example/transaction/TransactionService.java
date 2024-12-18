@@ -86,7 +86,8 @@ public class TransactionService implements ModelService<Transaction> {
         */
         User sender = transaction.getSender(), receiver = transaction.getReceiver();
         if (transaction.getAmount() > sender.getGehalt()) {
-            throw new InsufficientFundsException("Insufficient funds");
+            System.err.println("Nicht genuegend Geld!");
+            return;
         }
 
         try {

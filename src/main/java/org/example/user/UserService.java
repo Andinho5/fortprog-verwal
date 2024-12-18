@@ -1,29 +1,57 @@
 package org.example.user;
 
 import org.example.service.ModelService;
+import org.example.transaction.Transaction;
 import org.example.util.DBConnector;
+import org.example.util.MailInvalidException;
+import org.example.util.Regex;
+import org.example.util.UserNameAlreadyUsedException;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class UserService implements ModelService<User> {
 
+    public void processTransaction(Transaction transaction) {
+        System.out.println(transaction);
+        try {
+            User sender = transaction.getSender(), receiver = transaction.getReceiver();
+            PreparedStatement statement = connection.prepareStatement("update users set gehalt = ? where userid = ?");
+            statement.setDouble(1, sender.getGehalt() - transaction.getAmount());
+            statement.setString(2, sender.getUserid());
+            statement.executeUpdate();
+
+            PreparedStatement statement2 = connection.prepareStatement("update users set gehalt = ? where userid = ?");
+            statement2.setDouble(1, receiver.getGehalt() + transaction.getAmount());
+            statement2.setString(2, receiver.getUserid());
+            statement2.executeUpdate();
+        }
+        catch (SQLException e) {
+            throw new RuntimeException("Transaction failed.");
+        }
+    }
+
     public boolean validateUser(String username, String password) {
         for (User user : findAll()) {
-
-            if (user.getUsermail().equals(username) && user.getPassword().equals(password)) {
+            if (user.getUsermail().equals(username) &&
+                    user.getPassword().equals(password)) {
                 return true;
             }
         }
         return false;
     }
 
+    public boolean mailMatches(String mail) {
+        return Regex.EMAIL.matcher(mail).find();
+    }
+
     @Override
     public Optional<User> findById(String id) {
         for (User user : findAll()) {
-            System.out.println(user + ": " + user.getUserid());
             if (user.getUserid().equals(id)) {
                 return Optional.of(user);
             }
@@ -78,7 +106,7 @@ public class UserService implements ModelService<User> {
     }
 
     @Override
-    public void save(User user) {
+    public void save(User user) throws UserNameAlreadyUsedException {
         try {
             PreparedStatement statement = connection.prepareStatement("insert into users " +
                     "(userid, usermail, password, gehalt) values (?, ?, ?, ?)");
@@ -89,7 +117,7 @@ public class UserService implements ModelService<User> {
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new UserNameAlreadyUsedException("Username already used");
         }
     }
 }
