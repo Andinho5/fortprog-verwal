@@ -44,15 +44,22 @@ public class MainScreen implements Screen {
         else if (antwort.equals("q")) {
             System.exit(0);
         }
-        else {
+        else if (antwort.equals("n")) {
             register();
+        }
+        else {
+            onOpen();
         }
     }
 
     @Override
-    public void takeInput(String string) {
-
+    public void listUsers() {
     }
+
+    @Override
+    public void logout() throws IOException {
+    }
+
 
     public void login() throws IOException {
         System.out.print("Mailadresse: ");
@@ -86,7 +93,6 @@ public class MainScreen implements Screen {
                 login();
             }
             else {
-                //TODO zurückleiten zu register damit programm nicht zuende
                 throw new MailInvalidException("Mail entspricht nicht Richtlinien!");
             }
         } catch (UserNameAlreadyUsedException e) {

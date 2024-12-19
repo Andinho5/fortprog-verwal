@@ -98,7 +98,7 @@ public class MailApplication extends Application {
         }
     }
 
-    private void listUsers() {
+    public void listUsers() {
         System.out.println("Folgende User existieren:");
         userService.findAll().forEach(user -> System.out.println(user.toString()));
     }
@@ -116,6 +116,7 @@ public class MailApplication extends Application {
                 Posteingang aufrufen (4)
                 Alle Nutzer auflisten (5)
                 Zurueck ins Hauptmenue (6)
+                Abmelden (7)
                 """);
         System.out.print("Eingabe: ");
         String input = reader.readLine();
@@ -152,16 +153,14 @@ public class MailApplication extends Application {
             case "6" -> {
                 Main.setScreen(new MainScreen(10, user));
             }
+            case "7" -> {
+                logout();
+            }
             default -> {
                 System.out.println("Eingabefehler!");
             }
         }
         onOpen();
-    }
-
-    @Override
-    public void takeInput(String string) {
-
     }
 
 
