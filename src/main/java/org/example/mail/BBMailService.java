@@ -117,7 +117,7 @@ public class BBMailService implements ModelService<BBMail> {
     }
 
     @Override
-    public void save(BBMail bbMail) {
+    public boolean save(BBMail bbMail) {
         try {
             PreparedStatement statement = connection.prepareStatement("insert into messages " +
                     "(chatid, senderid, receiverid, content, date) values (?, ?, ?, ?, ?)");
@@ -131,5 +131,6 @@ public class BBMailService implements ModelService<BBMail> {
         catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return true;
     }
 }

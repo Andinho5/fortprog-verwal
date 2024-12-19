@@ -54,12 +54,12 @@ public class BankApplication extends Application {
             String menge = reader.readLine();
             double amount = Double.parseDouble(menge);
             if (amount > user.getGehalt()) {
-                System.err.println("Ungueltiger Betrag! Neustart.");
+                System.err.println("Ungueltiger Betrag, so viel Patte hast du nicht! Neustart.");
                 return getAmount();
             }
             return amount;
         } catch (NumberFormatException e) {
-            System.out.println("awdahdd");
+            System.out.println("Bitte gib eine gueltige Zahl ein!");
             return getAmount();
         }
     }
@@ -80,17 +80,25 @@ public class BankApplication extends Application {
         if (antwort.equals("n")) {
             Transaction transaction = new Transaction(UUID.randomUUID().toString(), user, empfaenger.get(),
                     amount, Timestamp.valueOf(LocalDateTime.now()), null);
-            transactionService.save(transaction);
-            userService.processTransaction(transaction);
-            System.out.println("Ueberweisung wird getaetigt");
+            if(transactionService.save(transaction)){
+                userService.processTransaction(transaction);
+                System.out.println("Ueberweisung wird getaetigt");
+            } else {
+                System.err.println("Ueberweisung wurde nicht getaetigt");
+            }
         }
         else if (antwort.equals("j")) {
             String nachricht = reader.readLine();
             Transaction transaction = new Transaction(UUID.randomUUID().toString(), user, empfaenger.get(),
                     amount, Timestamp.valueOf(LocalDateTime.now()), nachricht);
-            transactionService.save(transaction);
-            userService.processTransaction(transaction);
-            System.out.println("Ueberweisung wird getaetigt");
+
+            if(transactionService.save(transaction)){
+                userService.processTransaction(transaction);
+                System.out.println("Ueberweisung wird getaetigt");
+            } else {
+                System.err.println("Ueberweisung wurde nicht getaetigt");
+            }
+
         }
         else {
             System.err.println("Bitte Ja / Nein eingeben. Keine Nachricht wird erstellt.");
@@ -120,7 +128,6 @@ public class BankApplication extends Application {
         String input = reader.readLine();
         if (input.equals("0")) {
             System.out.println("Aktuelles Guthaben: " + user.getGehalt());
-            onOpen();
         }
         else if (input.equals("1")) {
             //TODO kontoauszüge
@@ -131,7 +138,6 @@ public class BankApplication extends Application {
             }
             catch (IOException e) {
                 System.err.println("Input-Fehler!");
-                onOpen();
             }
         }
         else if (input.equals("3")) {

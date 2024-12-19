@@ -14,5 +14,5 @@ public interface ModelService<T extends ModelObject> {
     Optional<T> findByAttribute(String attr, String value);
     List<T> findAll();
 
-    void save(T t);
+    boolean save(T t);
 }

@@ -153,6 +153,7 @@ public class MailApplication extends Application {
                 Main.setScreen(new MainScreen(10, user));
             }
             default -> {
+                System.out.println("Eingabefehler!");
             }
         }
         onOpen();

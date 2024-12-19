@@ -34,7 +34,7 @@ public class MainScreen implements Screen {
 
     @Override
     public void onOpen() throws IOException {
-        System.out.println("Willkommen im Hauptmenue vom BalanceBuddy!");
+        System.out.println("\nWillkommen im Hauptmenue vom BalanceBuddy!");
         System.out.print("Hast du bereits ein Konto? (j/n/q)\t");
         String antwort = reader.readLine();
 
@@ -67,7 +67,9 @@ public class MainScreen implements Screen {
         }
         else {
             System.out.println(Color.RED + "Fehler beim Login!" + Color.RESET);
+            onOpen();
         }
+
     }
 
     private void register() throws IOException {
@@ -99,11 +101,14 @@ public class MainScreen implements Screen {
             }
         } catch (MailInvalidException e) {
             System.err.println(e.getMessage());
+            System.out.println("Fehler!");
+            onOpen();
         }
+
     }
 
     public void chooseApplication() throws IOException {
-        System.out.println("\nMoechtest du die Banking-App (ank) oder dein Postfach (ost) aufrufen?");
+        System.out.println("\nMoechtest du die Banking-App (bank) oder dein Postfach (post) aufrufen?");
         String choice = reader.readLine();
         if (choice.contains("ank")) {
             Main.setScreen(new BankApplication(user));
