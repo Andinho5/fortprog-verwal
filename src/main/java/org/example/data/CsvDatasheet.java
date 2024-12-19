@@ -39,6 +39,14 @@ public class CsvDatasheet extends AbstractDatasheet {
 
     @Override
     public void save() {
+        if(!_file.exists()) {
+            try {
+                _file.getParentFile().mkdirs();
+                _file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         try(FileWriter writer = new FileWriter(_file, StandardCharsets.UTF_8, false)) {
             //print header
             writer.write("id;receiverId;amount;date;purpose");
@@ -49,7 +57,7 @@ public class CsvDatasheet extends AbstractDatasheet {
                 writer.write(transaction.getReceiverMail() + DELIMITER);
                 writer.write(String.valueOf(transaction.getAmount()) + DELIMITER);
                 writer.write(transaction.getDate().toString() + DELIMITER);
-                writer.write(transaction.getPurposeMessage());
+                writer.write(transaction.getPurposeMessage() == null ? "" : transaction.getPurposeMessage());
             }
         } catch (IOException e) {
             throw new RuntimeException("Error in saving to file "+_file.getAbsolutePath()+"'!", e);

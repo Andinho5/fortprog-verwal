@@ -1,11 +1,14 @@
 package org.example.ui;
 
 import org.example.Main;
+import org.example.data.CsvDatasheet;
+import org.example.transaction.BaseTransaction;
 import org.example.transaction.Transaction;
 import org.example.transaction.TransactionService;
 import org.example.user.User;
 import org.example.user.UserService;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -13,6 +16,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class BankApplication extends Application {
+
+    private static final String OUTPUT_DIR = "fortprog-verwal.save-location";
+
     private final User user;
     private final UserService userService;
     private final TransactionService transactionService;
@@ -125,6 +131,61 @@ public class BankApplication extends Application {
 
     }
 
+    private void printCsv(){/*
+        if(System.getProperty(OUTPUT_DIR) == null){
+            System.out.print("Bitte gib ein Verzeichnis zum Speichern an: ");
+            try {
+                System.setProperty(OUTPUT_DIR, reader.readLine().trim());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }finally {
+                printCsv();
+            }
+        }else{*/
+            Timestamp now = Timestamp.valueOf(LocalDateTime.now());
+            File file = new File(System.getProperty("user.home")+"/banking", "Kontoauszug_"+
+                    now.toString().replace(":", ".")+".csv");
+            CsvDatasheet datasheet = new CsvDatasheet(file);
+            for(Transaction transaction : transactionService.findAll()){
+                if(transaction.getSender().equals(user))datasheet.append(transaction);
+            }
+            datasheet.save();
+            System.out.println("[GREEN]Der Kontoauszug wurde erstellt! ("+file.getAbsolutePath()+")");
+        //}
+    }
+
+    private void readCsv(){
+        System.out.print("Bitte gib den Pfad einer Datei für die Überweisung an: ");
+        try {
+            File file = new File(reader.readLine());
+            if(!file.exists()){
+                System.out.println("[RED]Fehler! Diese Datei existiert nicht!");
+                return;
+            }
+            CsvDatasheet datasheet = new CsvDatasheet(file);
+            boolean success = datasheet.load();
+            if(!success){
+                System.out.println("[RED]Laden der Datei fehlgeschlagen!");
+                return;
+            }
+            if(user.getGehalt() < datasheet.getLoadedTotalMoney()){
+                System.out.println("[RED]Dein Guthaben von [YELLOW]"+user.getGehalt()+" [RED]unterschreitet die " +
+                        "Transaktionsmenge von [YELLOW]"+datasheet.getLoadedTotalMoney()+"[RED]!");
+                return;
+            }
+            for(BaseTransaction itr : datasheet.getAll()){
+                Transaction transaction = new Transaction(itr.getTransactionId(), user,
+                        userService.findByAttribute("name", itr.getReceiverMail()).get(),
+                        itr.getAmount(), itr.getDate(), itr.getPurposeMessage());
+                if(transactionService.save(transaction)){
+                    userService.processTransaction(transaction);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public void onOpen() throws IOException {
         System.out.println("\nWillkommen im Banking-Menue!");
@@ -155,11 +216,11 @@ public class BankApplication extends Application {
                 }
             }
             case "3" -> {
-                //TODO Massenueberweisung
+                readCsv();
             }
             case "4" -> withdrawl();
             case "5" -> {
-                //TODO CSV-Export
+                printCsv();
             }
             case "6" -> listUsers();
             case "7" -> Main.setScreen(new MainScreen(10, user));
@@ -168,7 +229,6 @@ public class BankApplication extends Application {
         }
         onOpen();
     }
-
 
     @Override
     public void logout() throws IOException {
