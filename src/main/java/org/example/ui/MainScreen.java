@@ -34,7 +34,7 @@ public class MainScreen implements Screen {
 
     @Override
     public void onOpen() throws IOException {
-        System.out.println("\nWillkommen im Hauptmenue vom BalanceBuddy!");
+        System.out.println("\nWillkommen bei BalanceBuddy!");
         System.out.print("Hast du bereits ein Konto? (j/n/q)\t");
         String antwort = reader.readLine();
 
