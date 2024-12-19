@@ -6,7 +6,6 @@ import org.example.util.DBConnector;
 import org.example.util.MailInvalidException;
 import org.example.util.Regex;
 import org.example.util.UserNameAlreadyUsedException;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;

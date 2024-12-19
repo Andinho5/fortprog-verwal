@@ -140,7 +140,7 @@ public class MailApplication extends Application {
                 onOpen();
             }
             case "5" -> {
-                Main.setScreen(new MainScreen(10));
+                Main.setScreen(new MainScreen(10, user));
             }
             default -> {
             }
@@ -155,7 +155,7 @@ public class MailApplication extends Application {
 
 
     @Override
-    public void logout() {
-
+    public void logout() throws IOException {
+        Main.setScreen(new MainScreen(10));
     }
 }

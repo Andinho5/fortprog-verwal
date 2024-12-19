@@ -122,7 +122,7 @@ public class BankApplication extends Application {
             }
             catch (IOException e) {
                 System.err.println("Input-Fehler!");
-                ueberweisen();
+                onOpen();
             }
         }
         else if (input.equals("3")) {
@@ -132,10 +132,11 @@ public class BankApplication extends Application {
 
         }
         else if (input.equals("5")) {
-            Main.setScreen(new MainScreen(10));
+            Main.setScreen(new MainScreen(10, user));
         }
         else {
-
+            System.out.println("Eingabefehler!");
+            onOpen();
         }
     }
 
@@ -146,8 +147,8 @@ public class BankApplication extends Application {
 
 
     @Override
-    public void logout() {
-
+    public void logout() throws IOException {
+        Main.setScreen(new MainScreen(10));
     }
 
 }

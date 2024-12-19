@@ -6,7 +6,6 @@ import org.example.user.UserService;
 import org.example.util.Color;
 import org.example.util.MailInvalidException;
 import org.example.util.UserNameAlreadyUsedException;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,6 +23,13 @@ public class MainScreen implements Screen {
     public MainScreen(int width) {
         this.width = width;
         this.userService = new UserService();
+    }
+
+    public MainScreen(int width, User user) throws IOException {
+        this.width = width;
+        this.user = user;
+        this.userService = new UserService();
+        chooseApplication();
     }
 
     @Override
@@ -49,15 +55,14 @@ public class MainScreen implements Screen {
     }
 
     public void login() throws IOException {
-        System.out.print("Benutzername: ");
-        String username = reader.readLine();
+        System.out.print("Mailadresse: ");
+        String usermail = reader.readLine();
         System.out.print("Passwort: ");
         String password = reader.readLine();
 
-        if (userService.validateUser(username, password)) { //insert DB-Query here with userid
-            System.out.println("Welt!");
-            userService.findByAttribute("name", username).ifPresent(user1 -> user = user1); //switch with correct user info from database
-            System.out.println("Hallo " + username + " !");
+        if (userService.validateUser(usermail, password)) { //insert DB-Query here with userid
+            userService.findByAttribute("name", usermail).ifPresent(user1 -> user = user1); //switch with correct user info from database
+            System.out.println("Hallo " + usermail + " !");
             chooseApplication();
         }
         else {
@@ -66,20 +71,24 @@ public class MainScreen implements Screen {
     }
 
     private void register() throws IOException {
-        System.out.print("Wie lautet dein Name? ");
-        String username = reader.readLine();
+        System.out.print("Wie lautet deine Mailadresse? ");
+        String usermail = reader.readLine();
         System.out.print("Wie lautet dein Passwort? ");
         String password = reader.readLine();
 
         try {
-            if (userService.mailMatches(username.trim())) {
-                userService.save(new User(UUID.randomUUID().toString(), username, BCrypt.hashpw(password, BCrypt.gensalt()), 1000.0d));
+            usermail = usermail.trim();
+            if (userService.mailMatches(usermail)) {
+                userService.save(new User(UUID.randomUUID().toString(), usermail, password, 1000.0d));
+                System.out.println("\nMelde dich nun an!");
+                login();
             }
             else {
+                //TODO zurückleiten zu register damit programm nicht zuende
                 throw new MailInvalidException("Mail entspricht nicht Richtlinien!");
             }
         } catch (UserNameAlreadyUsedException e) {
-            System.err.println("Fehler beim Registrieren des Users " + username + ", dieser wird schon benutzt");
+            System.err.println("Fehler beim Registrieren des Users " + usermail + ", dieser wird schon benutzt");
             System.out.print("Moechtest du von vorne starten? (j/n) ");
             String antwort = reader.readLine();
             if (antwort.equals("j")) {
