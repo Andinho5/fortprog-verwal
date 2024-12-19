@@ -34,4 +34,6 @@ public interface Datasheet {
 
     List<BaseTransaction> getAll();
 
+    double getLoadedTotalMoney();
+
 }

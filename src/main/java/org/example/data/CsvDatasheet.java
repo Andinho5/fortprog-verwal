@@ -36,7 +36,6 @@ public class CsvDatasheet extends AbstractDatasheet {
 
     private static final char DELIMITER = ';';
 
-
     public CsvDatasheet(File file) {
         super(file);
     }
@@ -74,21 +73,22 @@ public class CsvDatasheet extends AbstractDatasheet {
                         errors.add(CsvErrors.produceFromWrongLength(line, split.length, CsvUtil.READ_ELEMENTS));
                         continue;
                     }
-
+                    //mail;money;message
                     mail = split[0].trim();
+                    System.out.println("[BOLD][RED]MAIL HUEN = "+mail);
                     money = split[1].trim();
                     message = split[2].trim();
 
-                    String receiverMail = CsvUtil.formatText(mail);
-                    if(!Regex.EMAIL.matcher(receiverMail).matches())throw new PatternSyntaxException(
-                            "No valid email found!", receiverMail, 0);
+                    if(!Regex.EMAIL.matcher(mail).matches())throw new PatternSyntaxException(
+                            "No valid email found!", mail, 0);
                     double amount = Double.parseDouble(money);
                     if(amount < 0){
                         errors.add(CsvErrors.produceFromWrongEntry(line, money, "Negative Menge"));
                         continue;
                     }
+                    totalLoadedMoney += amount;
                     String purpose = message;
-                    append(new SimpleTransaction(receiverMail, amount, purpose));
+                    append(new SimpleTransaction(mail, amount, purpose));
                 } catch (NumberFormatException e){
                     errors.add(CsvErrors.produceFromWrongEntry(line, money, "Keine valide Zahl"));
                 } catch (PatternSyntaxException e){
