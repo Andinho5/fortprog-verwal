@@ -5,21 +5,17 @@ import org.example.transaction.Transaction;
 import org.example.transaction.TransactionService;
 import org.example.user.User;
 import org.example.user.UserService;
-import org.example.util.ReceiverNotFoundException;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 public class BankApplication extends Application {
-    private User user;
-    private UserService userService;
-    private TransactionService transactionService;
+    private final User user;
+    private final UserService userService;
+    private final TransactionService transactionService;
 
     public BankApplication(User user) {
         super(user);
@@ -54,12 +50,12 @@ public class BankApplication extends Application {
             String menge = reader.readLine();
             double amount = Double.parseDouble(menge);
             if (amount > user.getGehalt()) {
-                System.err.println("Ungueltiger Betrag! Neustart.");
+                System.err.println("Ungueltiger Betrag, so viel Patte hast du nicht! Neustart.");
                 return getAmount();
             }
             return amount;
         } catch (NumberFormatException e) {
-            System.out.println("awdahdd");
+            System.out.println("Bitte gib eine gueltige Zahl ein!");
             return getAmount();
         }
     }
@@ -80,17 +76,25 @@ public class BankApplication extends Application {
         if (antwort.equals("n")) {
             Transaction transaction = new Transaction(UUID.randomUUID().toString(), user, empfaenger.get(),
                     amount, Timestamp.valueOf(LocalDateTime.now()), null);
-            transactionService.save(transaction);
-            userService.processTransaction(transaction);
-            System.out.println("Ueberweisung wird getaetigt");
+            if(transactionService.save(transaction)){
+                userService.processTransaction(transaction);
+                System.out.println("Ueberweisung wird getaetigt");
+            } else {
+                System.err.println("Ueberweisung wurde nicht getaetigt");
+            }
         }
         else if (antwort.equals("j")) {
             String nachricht = reader.readLine();
             Transaction transaction = new Transaction(UUID.randomUUID().toString(), user, empfaenger.get(),
                     amount, Timestamp.valueOf(LocalDateTime.now()), nachricht);
-            transactionService.save(transaction);
-            userService.processTransaction(transaction);
-            System.out.println("Ueberweisung wird getaetigt");
+
+            if(transactionService.save(transaction)){
+                userService.processTransaction(transaction);
+                System.out.println("Ueberweisung wird getaetigt");
+            } else {
+                System.err.println("Ueberweisung wurde nicht getaetigt");
+            }
+
         }
         else {
             System.err.println("Bitte Ja / Nein eingeben. Keine Nachricht wird erstellt.");
@@ -98,56 +102,77 @@ public class BankApplication extends Application {
         onOpen();
     }
 
+    public void listUsers() {
+        System.out.println("Folgende User existieren:");
+        userService.findAll().forEach(user -> System.out.println(user.toString()));
+    }
+
+    public void withdrawl() throws IOException {
+        System.out.println("Aktuelles Guthaben: " + user.getGehalt());
+        System.out.println("Wie viel Geld möchtest du abheben?");
+        String menge = reader.readLine();
+        try{
+            double amount = Double.parseDouble(menge);
+            if(amount > user.getGehalt()) {
+                System.out.println("Du kannst nicht mehr Geld abheben als du auf dem Konto hast!");
+            } else {
+                user.setGehalt(user.getGehalt() - amount);
+                System.out.println("\nDein neuer Kontostand beträgt: "+user.getGehalt()+"\n");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Eingabefehler!");
+        }
+
+    }
+
     @Override
     public void onOpen() throws IOException {
         System.out.println("\nWillkommen im Banking-Menue!");
         System.out.println("""
-                Welche Taetigkeit brauchst du?
+                Was möchtest du tun?
                 Guthaben einsehen (0)
                 Kontoauszuege (1)
                 Einzelueberweisung (2)
                 Massenueberweisung (3)
-                Kontoauszuege in CSV exportieren (4)
-                Zurueck ins Hauptmenue (5)
+                Geld abheben (4)
+                Kontoauszuege in CSV exportieren (5)
+                Alle Nutzer auflisten (6)
+                Zurueck ins Hauptmenue (7)
+                Abmelden (8)
                 """);
         System.out.print("Eingabe: ");
         String input = reader.readLine();
-        if (input.equals("0")) {
-            System.out.println("Aktuelles Guthaben: " + user.getGehalt());
-            onOpen();
-        }
-        else if (input.equals("2")) {
-            try {
-                ueberweisen();
+        switch (input) {
+            case "0" -> System.out.println("Aktuelles Guthaben: " + user.getGehalt());
+            case "1" -> {
+                //TODO kontoauszüge
             }
-            catch (IOException e) {
-                System.err.println("Input-Fehler!");
-                ueberweisen();
+            case "2" -> {
+                try {
+                    ueberweisen();
+                } catch (IOException e) {
+                    System.err.println("Input-Fehler!");
+                }
             }
+            case "3" -> {
+                //TODO Massenueberweisung
+            }
+            case "4" -> withdrawl();
+            case "5" -> {
+                //TODO CSV-Export
+            }
+            case "6" -> listUsers();
+            case "7" -> Main.setScreen(new MainScreen(10, user));
+            case "8" -> logout();
+            default -> System.out.println("Eingabefehler!");
         }
-        else if (input.equals("3")) {
-
-        }
-        else if (input.equals("4")) {
-
-        }
-        else if (input.equals("5")) {
-            Main.setScreen(new MainScreen(10));
-        }
-        else {
-
-        }
-    }
-
-    @Override
-    public void takeInput(String string) {
-
+        onOpen();
     }
 
 
     @Override
-    public void logout() {
-
+    public void logout() throws IOException {
+        Main.setScreen(new MainScreen(10));
     }
 
 }

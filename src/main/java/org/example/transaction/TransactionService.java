@@ -80,14 +80,17 @@ public class TransactionService implements ModelService<Transaction> {
     }
 
     @Override
-    public void save(Transaction transaction) {
+    public boolean save(Transaction transaction) {
         /*
         Safety-Checks
         */
         User sender = transaction.getSender(), receiver = transaction.getReceiver();
         if (transaction.getAmount() > sender.getGehalt()) {
             System.err.println("Nicht genuegend Geld!");
-            return;
+            return false;
+        } else if (transaction.getAmount() <= 0) {
+            System.err.println("Betrag muss groesser als 0 sein!");
+            return false;
         }
 
         try {
@@ -102,7 +105,8 @@ public class TransactionService implements ModelService<Transaction> {
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            throw new RuntimeException(e);
+            return false;
         }
+        return true;
     }
 }

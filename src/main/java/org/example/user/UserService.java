@@ -6,7 +6,6 @@ import org.example.util.DBConnector;
 import org.example.util.MailInvalidException;
 import org.example.util.Regex;
 import org.example.util.UserNameAlreadyUsedException;
-import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -31,7 +30,6 @@ public class UserService implements ModelService<User> {
             statement2.executeUpdate();
         }
         catch (SQLException e) {
-            throw new RuntimeException("Transaction failed.");
         }
     }
 
@@ -106,7 +104,7 @@ public class UserService implements ModelService<User> {
     }
 
     @Override
-    public void save(User user) throws UserNameAlreadyUsedException {
+    public boolean save(User user) throws UserNameAlreadyUsedException {
         try {
             PreparedStatement statement = connection.prepareStatement("insert into users " +
                     "(userid, usermail, password, gehalt) values (?, ?, ?, ?)");
@@ -119,5 +117,6 @@ public class UserService implements ModelService<User> {
         catch (SQLException e) {
             throw new UserNameAlreadyUsedException("Username already used");
         }
+        return true;
     }
 }

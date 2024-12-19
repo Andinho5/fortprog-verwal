@@ -98,9 +98,28 @@ public class MailApplication extends Application {
         }
     }
 
+    public void listUsers() {
+        System.out.println("Folgende User existieren:");
+        userService.findAll().forEach(user -> System.out.println(user.toString()));
+    }
+
+    private void inbox(){
+        List<BBMail> ownMail = mailService.findAll().stream()
+                .filter(bbMail -> bbMail.getSender().equals(user) || bbMail.getRecipient().equals(user))
+                .sorted(Comparator.comparing(mail -> ((BBMail) mail).getRecipient().getUsermail())
+                        .thenComparing(mail -> ((BBMail) mail).getDate()))
+                .toList();
+        int i = 1;
+        for (BBMail mail : ownMail) {
+            System.out.println("("+i+")" + " "+mail);
+            i++;
+        }
+    }
+
+
     @Override
     public void onOpen() throws IOException {
-        System.out.println("Willkommen im Postfach");
+        System.out.println("\nWillkommen im Postfach");
         System.out.println("""
                 Was moechtest du tun?
                 Eigene Pinnwand einsehen (0)
@@ -108,7 +127,9 @@ public class MailApplication extends Application {
                 Pinnwandkommentar schreiben (2)
                 DM schreiben (3)
                 Posteingang aufrufen (4)
-                Zurueck ins Hauptmenue (5)
+                Alle Nutzer auflisten (5)
+                Zurueck ins Hauptmenue (6)
+                Abmelden (7)
                 """);
         System.out.print("Eingabe: ");
         String input = reader.readLine();
@@ -129,33 +150,33 @@ public class MailApplication extends Application {
                 writeDM();
             }
             case "4" -> {
-                List<BBMail> ownMail = mailService.findAll().stream()
-                        .filter(bbMail -> bbMail.getSender().equals(user) || bbMail.getRecipient().equals(user))
-                        .sorted(Comparator.comparing(mail -> ((BBMail) mail).getRecipient().getUsermail())
-                                .thenComparing(mail -> ((BBMail) mail).getDate()))
-                        .toList();
-                for (BBMail mail : ownMail) {
-                    System.out.println(mail);
-                }
-                onOpen();
+                inbox();
             }
             case "5" -> {
-                Main.setScreen(new MainScreen(10));
+                listUsers();
+            }
+            case "6" -> {
+                Main.setScreen(new MainScreen(10, user));
+            }
+            case "7" -> {
+                logout();
             }
             default -> {
+                System.out.println("Eingabefehler!");
             }
         }
         onOpen();
     }
 
-    @Override
-    public void takeInput(String string) {
-
-    }
-
 
     @Override
-    public void logout() {
-
+    public void logout() throws IOException {
+        Main.setScreen(new MainScreen(10));
     }
+
+    @Override
+    public String toString() {
+        return "Mailadresse: "+user.getUsermail()+"\n";
+    }
+
 }

@@ -8,5 +8,6 @@ public interface Screen {
     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     void onOpen() throws IOException;
-    void takeInput(String string);
+    void listUsers();
+    void logout() throws IOException;
 }
