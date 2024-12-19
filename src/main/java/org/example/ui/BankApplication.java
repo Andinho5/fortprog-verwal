@@ -208,7 +208,11 @@ public class BankApplication extends Application {
         switch (input) {
             case "0" -> System.out.println("Aktuelles Guthaben: " + user.getGehalt());
             case "1" -> {
-                //TODO kontoauszüge
+                for(Transaction transaction : transactionService.findAll()){
+                    if(transaction.getSender().equals(user) || transaction.getReceiver().equals(user)){
+                        System.out.println(transaction);
+                    }
+                }
             }
             case "2" -> {
                 try {
