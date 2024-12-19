@@ -5,21 +5,17 @@ import org.example.transaction.Transaction;
 import org.example.transaction.TransactionService;
 import org.example.user.User;
 import org.example.user.UserService;
-import org.example.util.ReceiverNotFoundException;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 public class BankApplication extends Application {
-    private User user;
-    private UserService userService;
-    private TransactionService transactionService;
+    private final User user;
+    private final UserService userService;
+    private final TransactionService transactionService;
 
     public BankApplication(User user) {
         super(user);
@@ -111,6 +107,24 @@ public class BankApplication extends Application {
         userService.findAll().forEach(user -> System.out.println(user.toString()));
     }
 
+    public void withdrawl() throws IOException {
+        System.out.println("Aktuelles Guthaben: " + user.getGehalt());
+        System.out.println("Wie viel Geld möchtest du abheben?");
+        String menge = reader.readLine();
+        try{
+            double amount = Double.parseDouble(menge);
+            if(amount > user.getGehalt()) {
+                System.out.println("Du kannst nicht mehr Geld abheben als du auf dem Konto hast!");
+            } else {
+                user.setGehalt(user.getGehalt() - amount);
+                System.out.println("\nDein neuer Kontostand beträgt: "+user.getGehalt()+"\n");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Eingabefehler!");
+        }
+
+    }
+
     @Override
     public void onOpen() throws IOException {
         System.out.println("\nWillkommen im Banking-Menue!");
@@ -120,44 +134,37 @@ public class BankApplication extends Application {
                 Kontoauszuege (1)
                 Einzelueberweisung (2)
                 Massenueberweisung (3)
-                Kontoauszuege in CSV exportieren (4)
-                Alle Nutzer auflisten (5)
-                Zurueck ins Hauptmenue (6)
-                Abmelden (7)
+                Geld abheben (4)
+                Kontoauszuege in CSV exportieren (5)
+                Alle Nutzer auflisten (6)
+                Zurueck ins Hauptmenue (7)
+                Abmelden (8)
                 """);
         System.out.print("Eingabe: ");
         String input = reader.readLine();
-        if (input.equals("0")) {
-            System.out.println("Aktuelles Guthaben: " + user.getGehalt());
-        }
-        else if (input.equals("1")) {
-            //TODO kontoauszüge
-        }
-        else if (input.equals("2")) {
-            try {
-                ueberweisen();
+        switch (input) {
+            case "0" -> System.out.println("Aktuelles Guthaben: " + user.getGehalt());
+            case "1" -> {
+                //TODO kontoauszüge
             }
-            catch (IOException e) {
-                System.err.println("Input-Fehler!");
+            case "2" -> {
+                try {
+                    ueberweisen();
+                } catch (IOException e) {
+                    System.err.println("Input-Fehler!");
+                }
             }
-        }
-        else if (input.equals("3")) {
-
-        }
-        else if (input.equals("4")) {
-
-        }
-        else if (input.equals("5")) {
-            listUsers();
-        }
-        else if (input.equals("6")) {
-            Main.setScreen(new MainScreen(10, user));
-        }
-        else if (input.equals("7")) {
-            logout();
-        }
-        else {
-            System.out.println("Eingabefehler!");
+            case "3" -> {
+                //TODO Massenueberweisung
+            }
+            case "4" -> withdrawl();
+            case "5" -> {
+                //TODO CSV-Export
+            }
+            case "6" -> listUsers();
+            case "7" -> Main.setScreen(new MainScreen(10, user));
+            case "8" -> logout();
+            default -> System.out.println("Eingabefehler!");
         }
         onOpen();
     }
