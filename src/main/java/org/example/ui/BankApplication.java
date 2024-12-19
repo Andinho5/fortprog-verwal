@@ -98,23 +98,32 @@ public class BankApplication extends Application {
         onOpen();
     }
 
+    private void listUsers() {
+        System.out.println("Folgende User existieren:");
+        userService.findAll().forEach(user -> System.out.println(user.toString()));
+    }
+
     @Override
     public void onOpen() throws IOException {
         System.out.println("\nWillkommen im Banking-Menue!");
         System.out.println("""
-                Welche Taetigkeit brauchst du?
+                Was möchtest du tun?
                 Guthaben einsehen (0)
                 Kontoauszuege (1)
                 Einzelueberweisung (2)
                 Massenueberweisung (3)
                 Kontoauszuege in CSV exportieren (4)
-                Zurueck ins Hauptmenue (5)
+                Alle Nutzer auflisten (5)
+                Zurueck ins Hauptmenue (6)
                 """);
         System.out.print("Eingabe: ");
         String input = reader.readLine();
         if (input.equals("0")) {
             System.out.println("Aktuelles Guthaben: " + user.getGehalt());
             onOpen();
+        }
+        else if (input.equals("1")) {
+            //TODO kontoauszüge
         }
         else if (input.equals("2")) {
             try {
@@ -132,12 +141,15 @@ public class BankApplication extends Application {
 
         }
         else if (input.equals("5")) {
+            listUsers();
+        }
+        else if (input.equals("6")) {
             Main.setScreen(new MainScreen(10, user));
         }
         else {
             System.out.println("Eingabefehler!");
-            onOpen();
         }
+        onOpen();
     }
 
     @Override

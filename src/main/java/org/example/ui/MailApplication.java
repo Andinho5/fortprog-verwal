@@ -98,9 +98,15 @@ public class MailApplication extends Application {
         }
     }
 
+    private void listUsers() {
+        System.out.println("Folgende User existieren:");
+        userService.findAll().forEach(user -> System.out.println(user.toString()));
+    }
+
+
     @Override
     public void onOpen() throws IOException {
-        System.out.println("Willkommen im Postfach");
+        System.out.println("\nWillkommen im Postfach");
         System.out.println("""
                 Was moechtest du tun?
                 Eigene Pinnwand einsehen (0)
@@ -108,7 +114,8 @@ public class MailApplication extends Application {
                 Pinnwandkommentar schreiben (2)
                 DM schreiben (3)
                 Posteingang aufrufen (4)
-                Zurueck ins Hauptmenue (5)
+                Alle Nutzer auflisten (5)
+                Zurueck ins Hauptmenue (6)
                 """);
         System.out.print("Eingabe: ");
         String input = reader.readLine();
@@ -140,6 +147,9 @@ public class MailApplication extends Application {
                 onOpen();
             }
             case "5" -> {
+                listUsers();
+            }
+            case "6" -> {
                 Main.setScreen(new MainScreen(10, user));
             }
             default -> {
@@ -157,5 +167,10 @@ public class MailApplication extends Application {
     @Override
     public void logout() throws IOException {
         Main.setScreen(new MainScreen(10));
+    }
+
+    @Override
+    public String toString() {
+        return "Mailadresse: "+user.getUsermail()+"\n";
     }
 }

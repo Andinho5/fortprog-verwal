@@ -103,7 +103,7 @@ public class MainScreen implements Screen {
     }
 
     public void chooseApplication() throws IOException {
-        System.out.println("\nMoechtest du die Banking-App oder dein Postfach aufrufen?");
+        System.out.println("\nMoechtest du die Banking-App (ank) oder dein Postfach (ost) aufrufen?");
         String choice = reader.readLine();
         if (choice.contains("ank")) {
             Main.setScreen(new BankApplication(user));
