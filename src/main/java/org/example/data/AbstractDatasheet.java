@@ -15,6 +15,7 @@ public abstract class AbstractDatasheet implements Datasheet {
     protected final ArrayList<BaseTransaction> transactions = new ArrayList<>();
     protected final HashMap<String, List<BaseTransaction>> pointingTransactions = new HashMap<>();
     protected final File _file;
+    protected double totalLoadedMoney = 0;
     public AbstractDatasheet(File file) {
         this._file = file;
     }
@@ -34,6 +35,11 @@ public abstract class AbstractDatasheet implements Datasheet {
     @Override
     public List<BaseTransaction> getAll() {
         return transactions;
+    }
+
+    @Override
+    public double getLoadedTotalMoney() {
+        return totalLoadedMoney;
     }
 
     static class SimpleTransaction implements BaseTransaction{
