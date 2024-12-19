@@ -76,4 +76,8 @@ public class StringTableFormatter {
         print(null);
     }
 
+    public boolean hasData(){
+        return !data.isEmpty();
+    }
+
 }

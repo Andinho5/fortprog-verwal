@@ -24,8 +24,9 @@ public interface Datasheet {
 
     /**
      * Loads any content (if known and this sheet exists locally) into the memory.
+     * @return Whether the loading was successful or not.
      */
-    void load();
+    boolean load();
 
     /* -- Getter -- */
 
