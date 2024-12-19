@@ -192,7 +192,7 @@ public class BankApplication extends Application {
     public void onOpen() throws IOException {
         System.out.println("\nWillkommen im Banking-Menue!");
         System.out.println("""
-                Was möchtest du tun?
+                Was moechtest du tun?
                 Guthaben einsehen (0)
                 Kontoauszuege (1)
                 Einzelueberweisung (2)

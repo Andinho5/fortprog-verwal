@@ -4,13 +4,11 @@ import org.example.data.parse.CsvErrors;
 import org.example.data.parse.CsvUtil;
 import org.example.data.parse.ParseError;
 import org.example.transaction.BaseTransaction;
-import org.example.util.Color;
 import org.example.util.Regex;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
-import java.util.Scanner;
 import java.util.regex.PatternSyntaxException;
 
 /**

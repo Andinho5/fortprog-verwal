@@ -7,7 +7,10 @@ import org.example.mail.PinnwandComment;
 import org.example.user.User;
 import org.example.user.UserService;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -128,8 +131,9 @@ public class MailApplication extends Application {
                 DM schreiben (3)
                 Posteingang aufrufen (4)
                 Alle Nutzer auflisten (5)
-                Zurueck ins Hauptmenue (6)
-                Abmelden (7)
+                Nachrichtenverkehr in Datei speichern (6)
+                Zurueck ins Hauptmenue (7)
+                Abmelden (8)
                 """);
         System.out.print("Eingabe: ");
         String input = reader.readLine();
@@ -156,9 +160,12 @@ public class MailApplication extends Application {
                 listUsers();
             }
             case "6" -> {
-                Main.setScreen(new MainScreen(10, user));
+                printMails();
             }
             case "7" -> {
+                Main.setScreen(new MainScreen(10, user));
+            }
+            case "8" -> {
                 logout();
             }
             default -> {
@@ -168,6 +175,35 @@ public class MailApplication extends Application {
         onOpen();
     }
 
+    private void printMails(){
+        File file = new File(System.getProperty("user.home"), "mails/Nachrichtenverkehr.csv");
+        if(!file.exists()){
+            file.getParentFile().mkdirs();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        try(FileWriter writer = new FileWriter(file, StandardCharsets.UTF_8, false)){
+            writer.write("from;to;date;message");
+            List<BBMail> ownMail = mailService.findAll().stream()
+                    .filter(bbMail -> bbMail.getSender().equals(user) || bbMail.getRecipient().equals(user))
+                    .sorted(Comparator.comparing(mail -> ((BBMail) mail).getRecipient().getUsermail())
+                            .thenComparing(mail -> ((BBMail) mail).getDate()))
+                    .toList();
+            for(BBMail mail : ownMail){
+                writer.write(System.lineSeparator());
+                writer.write(mail.getSender().getUsermail()+";");
+                writer.write(mail.getRecipient().getUsermail()+";");
+                writer.write(mail.getDate().toString()+";");
+                writer.write(mail.getContent());
+            }
+            System.out.println("[GREEN] Datei gespeichert in '"+file.getAbsolutePath()+"'!");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public void logout() throws IOException {
