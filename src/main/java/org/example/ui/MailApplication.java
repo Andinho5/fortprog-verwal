@@ -103,6 +103,19 @@ public class MailApplication extends Application {
         userService.findAll().forEach(user -> System.out.println(user.toString()));
     }
 
+    private void inbox(){
+        List<BBMail> ownMail = mailService.findAll().stream()
+                .filter(bbMail -> bbMail.getSender().equals(user) || bbMail.getRecipient().equals(user))
+                .sorted(Comparator.comparing(mail -> ((BBMail) mail).getRecipient().getUsermail())
+                        .thenComparing(mail -> ((BBMail) mail).getDate()))
+                .toList();
+        int i = 1;
+        for (BBMail mail : ownMail) {
+            System.out.println("("+i+")" + " "+mail);
+            i++;
+        }
+    }
+
 
     @Override
     public void onOpen() throws IOException {
@@ -137,15 +150,7 @@ public class MailApplication extends Application {
                 writeDM();
             }
             case "4" -> {
-                List<BBMail> ownMail = mailService.findAll().stream()
-                        .filter(bbMail -> bbMail.getSender().equals(user) || bbMail.getRecipient().equals(user))
-                        .sorted(Comparator.comparing(mail -> ((BBMail) mail).getRecipient().getUsermail())
-                                .thenComparing(mail -> ((BBMail) mail).getDate()))
-                        .toList();
-                for (BBMail mail : ownMail) {
-                    System.out.println(mail);
-                }
-                onOpen();
+                inbox();
             }
             case "5" -> {
                 listUsers();
@@ -173,4 +178,5 @@ public class MailApplication extends Application {
     public String toString() {
         return "Mailadresse: "+user.getUsermail()+"\n";
     }
+
 }
