@@ -174,13 +174,15 @@ public class BankApplication extends Application {
                 return;
             }
             for(BaseTransaction itr : datasheet.getAll()){
-                Transaction transaction = new Transaction(itr.getTransactionId(), user,
-                        userService.findByAttribute("name", itr.getReceiverMail()).get(),
-                        itr.getAmount(), itr.getDate(), itr.getPurposeMessage());
-                if(transactionService.save(transaction)){
-                    userService.processTransaction(transaction);
-                }
+                userService.findByAttribute("name", itr.getReceiverMail()).ifPresentOrElse(user -> {
+                    Transaction transaction = new Transaction(itr.getTransactionId(), user,
+                            user, itr.getAmount(), itr.getDate(), itr.getPurposeMessage());
+                    if(transactionService.save(transaction)){
+                        userService.processTransaction(transaction);
+                    }
+                }, () -> System.err.println("[RED]Fehler! Dieser User wurde nicht gefunden!"));
             }
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
