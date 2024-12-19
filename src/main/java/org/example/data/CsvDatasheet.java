@@ -7,10 +7,7 @@ import org.example.transaction.BaseTransaction;
 import org.example.util.Color;
 import org.example.util.Regex;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -61,13 +58,13 @@ public class CsvDatasheet extends AbstractDatasheet {
 
     @Override
     public boolean load() {
-        try(Scanner scanner = new Scanner(_file)) {
+        try(BufferedReader scammer = new BufferedReader(new FileReader(_file, StandardCharsets.UTF_8))) {
             LinkedList<ParseError> errors = new LinkedList<>();
             int line = 1;
-            while (scanner.hasNext()){
+            while (scammer.ready()){
                 String mail = "", money = "", message = "";
                 try {
-                    String input = scanner.nextLine();
+                    String input = scammer.readLine();
                     String[] split = input.split(String.valueOf(DELIMITER));
                     if (split.length < CsvUtil.READ_ELEMENTS){
                         errors.add(CsvErrors.produceFromWrongLength(line, split.length, CsvUtil.READ_ELEMENTS));
@@ -75,6 +72,8 @@ public class CsvDatasheet extends AbstractDatasheet {
                     }
                     //mail;money;message
                     mail = split[0].trim();
+                    mail = mail.replaceAll("\\uFEFF", ""); // Entfernt BOM
+                    mail = mail.replaceAll("\\p{C}", ""); // Entfernt Steuerzeichen
                     System.out.println("[BOLD][RED]MAIL HUEN = "+mail);
                     money = split[1].trim();
                     message = split[2].trim();
@@ -104,6 +103,8 @@ public class CsvDatasheet extends AbstractDatasheet {
         } catch (FileNotFoundException e) {
             System.out.println("Fehler beim laden der Datei '"+_file.getAbsolutePath()+"'! Die Datei exisitert nicht");
             return false;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         return true;
     }
