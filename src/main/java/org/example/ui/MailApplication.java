@@ -161,6 +161,7 @@ public class MailApplication extends Application {
             }
             case "6" -> {
                 printMails();
+                printPinwand();
             }
             case "7" -> {
                 Main.setScreen(new MainScreen(10, user));
@@ -198,6 +199,30 @@ public class MailApplication extends Application {
                 writer.write(mail.getRecipient().getUsermail()+";");
                 writer.write(mail.getDate().toString()+";");
                 writer.write(mail.getContent());
+            }
+            System.out.println("[GREEN] Datei gespeichert in '"+file.getAbsolutePath()+"'!");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void printPinwand(){
+        File file = new File(System.getProperty("user.home"), "mails/Pinnwand.csv");
+        if(!file.exists()){
+            file.getParentFile().mkdirs();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        try(FileWriter writer = new FileWriter(file, StandardCharsets.UTF_8, false)){
+            writer.write("author;date;content");
+            for(PinnwandComment comment : mailService.getPinnwand()){
+                writer.write(System.lineSeparator());
+                writer.write(comment.getAuthor().getUsermail()+";");
+                writer.write(comment.getDate().toString()+";");
+                writer.write(comment.getContent());
             }
             System.out.println("[GREEN] Datei gespeichert in '"+file.getAbsolutePath()+"'!");
         } catch (IOException e) {
